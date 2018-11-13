@@ -27,55 +27,66 @@ public class createRobot {
             BufferedWriter out = new BufferedWriter(fstream);
 
             //start code
-            out.write("package sample;\n" +
-                    "import robocode.*;\n" +
-                    "import robocode.Robot;\n" +
-                    "import java.awt.Color;\n" +
-                    "public class SamBot extends Robot {\n" +
-                    "    public void run(){\n" +
-                    "        while(true){\n" +
-                    "            ahead(" + chromo[0] +");\n" +
-                    "            turnGunRight(" + chromo[1] + "); //scan\n" +
-                    "            back(" + chromo[2] + ");\n" +
-                    "            turnGunRight(" + chromo[3] + "); //scan\n" +
+            out.write("/*******************************************************************************\n" +
+                    " * Copyright (c) 2001-2013 Mathew A. Nelson and Robocode contributors\n" +
+                    " * All rights reserved. This program and the accompanying materials\n" +
+                    " * are made available under the terms of the Eclipse Public License v1.0\n" +
+                    " * which accompanies this distribution, and is available at\n" +
+                    " * http://robocode.sourceforge.net/license/epl-v10.html\n" +
+                    " *******************************************************************************/\n" +
                     "\n" +
-                    "            \n" +
-                    "        }\n" +
-                    "    }\n" +
-                    "    public void onScannedRobot(ScannedRobotEvent e){\n" +
-                    "        double distance = e.getDistance(); //get the distance of the scanned robot\n" +
-                    "        if(distance > 800) //this conditions adjust the fire force according the distance of the scanned robot.\n" +
-                    "            fire(" + chromo[4] + ");\n" +
-                    "        else if(distance > 600 && distance <= 800)\n" +
-                    "            fire(" + chromo[5] + ");\n" +
-                    "        else if(distance > 400 && distance <= 600)\n" +
-                    "            fire(" + chromo[6] + ");\n" +
-                    "        else if(distance > 200 && distance <= 400)\n" +
-                    "            fire(" + chromo[7] + ");\n" +
-                    "        else if(distance < 200)\n" +
-                    "            fire(" + chromo[8] + ");\n" +
-                    "    }\n" +
-                    "    public void onHitByBullet(HitByBulletEvent e){\n" +
-                    "        double energy = getEnergy();\n" +
-                    "        double bearing = e.getBearing(); //Get the direction which is arrived the bullet.\n" +
-                    "        if(energy <" + chromo[9] + "){ // if the energy is low, the robot go away from the enemy\n" +
-                    "            turnRight(-bearing); //This isn't accurate but release your robot.\n" +
-                    "            ahead(" + chromo[10] + "); //The robot goes away from the enemy.\n" +
-                    "        }\n" +
-                    "        else\n" +
-                    "            turnRight(" + chromo[11] + "); // scan\n" +
-                    "    }\n" +
-                    "    public void onHitWall(HitWallEvent e){\n" +
-                    "        double bearing = e.getBearing(); //get the bearing of the wall\n" +
-                    "        turnRight(-bearing); //This isn't accurate but release your robot.\n" +
-                    "        ahead(" + chromo[12] + "); //The robot goes away from the wall.\n" +
-                    "    }\n" +
-                    "");
-
-
-
-
-            out.append("\n}");
+                    "package sample;\n" +
+                    "\n" +
+                    "\n" +
+                    "import robocode.HitByBulletEvent;\n" +
+                    "import robocode.HitWallEvent;\n" +
+                    "import robocode.RateControlRobot;\n" +
+                    "import robocode.ScannedRobotEvent;\n" +
+                    "\n" +
+                    "\n" +
+                    "/**\n" +
+                    " * This is a sample of a robot using the RateControlRobot class\n" +
+                    " * \n" +
+                    " * @author Joshua Galecki (original)\n" +
+                    " */\n" +
+                    "public class SamBot extends RateControlRobot {\n" +
+                    "\n" +
+                    "\tint turnCounter;\n" +
+                    "\tpublic void run() {\n" +
+                    "\n" +
+                    "\t\tturnCounter = 0;\n" +
+                    "\t\tsetGunRotationRate(" + chromo[0] + ");\n" +
+                    "\t\t\n" +
+                    "\t\twhile (true) {\n" +
+                    "\t\t\tif (turnCounter % 64 == 0) {\n" +
+                    "\t\t\t\t// Straighten out, if we were hit by a bullet and are turning\n" +
+                    "\t\t\t\tsetTurnRate(0);\n" +
+                    "\t\t\t\t// Go forward with a velocity of 4\n" +
+                    "\t\t\t\tsetVelocityRate(" + chromo[1] + ");\n" +
+                    "\t\t\t}\n" +
+                    "\t\t\tif (turnCounter % 64 == 32) {\n" +
+                    "\t\t\t\t// Go backwards, faster\n" +
+                    "\t\t\t\tsetVelocityRate(-" + chromo[2] +");\n" +
+                    "\t\t\t}\n" +
+                    "\t\t\tturnCounter++;\n" +
+                    "\t\t\texecute();\n" +
+                    "\t\t}\n" +
+                    "\t}\n" +
+                    "\n" +
+                    "\tpublic void onScannedRobot(ScannedRobotEvent e) {\n" +
+                    "\t\tfire(1);\n" +
+                    "\t}\n" +
+                    "\n" +
+                    "\tpublic void onHitByBullet(HitByBulletEvent e) {\n" +
+                    "\t\t// Turn to confuse the other robot\n" +
+                    "\t\tsetTurnRate(" + chromo[3] + ");\n" +
+                    "\t}\n" +
+                    "\t\n" +
+                    "\tpublic void onHitWall(HitWallEvent e) {\n" +
+                    "\t\t// Move away from the wall\n" +
+                    "\t\tsetVelocityRate(-1 * getVelocityRate());\n" +
+                    "\t}\n" +
+                    "}\n");
 
             out.close(); // close output stream
 

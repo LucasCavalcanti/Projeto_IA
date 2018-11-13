@@ -16,11 +16,11 @@ import robocode.control.RobotSpecification;
 public class robocodeGA extends FitnessFunction{
 	
 	// set amount of generations to evolve
-	public static final int MAX_GENERATIONS = 70;
+	public static final int MAX_GENERATIONS = 1;
 	// set population size per generation
-	public static final int POPULATION_SIZE = 20;
+	public static final int POPULATION_SIZE = 10;
 	// amount of chromosomes
-	public static final int CHROMOSOME_AMOUNT = 13;
+	public static final int CHROMOSOME_AMOUNT = 4;
 	// track scores
 	public static int robotScore,enemyScore;
 
@@ -33,19 +33,10 @@ public class robocodeGA extends FitnessFunction{
 	    
 	    //set up sample genes - add multiple genes to the array
 	    Gene[] sampleGenes = new Gene[ CHROMOSOME_AMOUNT ];
-		sampleGenes[0] = new DoubleGene(conf, 0, 600 );  //ahead
-		sampleGenes[1] = new DoubleGene(conf, 0, 360 );  //turnRight
-		sampleGenes[2] = new DoubleGene(conf, 0, 600); //back
-		sampleGenes[3] = new DoubleGene(conf, 0, 360); //turnRight
-		sampleGenes[4] = new DoubleGene(conf, 1, 5); //bullet power
-		sampleGenes[5] = new DoubleGene(conf, 1, 5); //bullet power
-		sampleGenes[6] = new DoubleGene(conf, 1, 5); //bullet power
-		sampleGenes[7] = new DoubleGene(conf, 1, 5); //bullet power
-		sampleGenes[8] = new DoubleGene(conf, 1, 5); //bullet power
-		sampleGenes[9] = new DoubleGene(conf, 0, 100); //energy to run
-		sampleGenes[10] = new DoubleGene(conf, 0, 600); //run away
-		sampleGenes[11] = new DoubleGene(conf, 0, 360); //turnRight
-		sampleGenes[12] = new DoubleGene(conf, 0, 600); //run
+		sampleGenes[0] = new DoubleGene(conf, 0, 30);
+		sampleGenes[1] = new DoubleGene(conf, 0, 30 );
+		sampleGenes[2] = new DoubleGene(conf, 0, 30);
+		sampleGenes[3] = new DoubleGene(conf, 0, 30);
 
 
 		IChromosome sampleChromosome = new Chromosome(conf, sampleGenes); // create chromo from genes
@@ -111,12 +102,12 @@ public class robocodeGA extends FitnessFunction{
         engine.setVisible(false); // show battle in GUI ?
         
         BattlefieldSpecification battlefield = new BattlefieldSpecification(800, 600); // battle field size
-        RobotSpecification[] selectedRobots = engine.getLocalRepository("sample.VelociRobot,sample.RamFire,sample.Fire,sample.Crazy,sample.SamBot"); // which sample bots to take to battle
+        RobotSpecification[] selectedRobots = engine.getLocalRepository("sample.VelociRobot,sample.SamBot"); // which sample bots to take to battle
         BattleSpecification battleSpec = new BattleSpecification(numberOfRounds, battlefield, selectedRobots);
         
         engine.runBattle(battleSpec, true); // run battle - wait till the battle is over
         engine.close(); // clean up engine
-        fitness = robotScore/numberOfRounds; // set fitness score
+        fitness = (robotScore - enemyScore)/numberOfRounds; // set fitness score
         
         return fitness > 0 ? fitness : 0; // return fitness score if it's over 0
     }
