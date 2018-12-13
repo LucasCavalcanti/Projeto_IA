@@ -1,27 +1,35 @@
 library(readr)
 library(caret)
 
-true_car_listings <- read_csv("/home/lucas/Downloads/true_car_listings.csv")
-newSet <- true_car_listings[sample(nrow(true_car_listings), 1000), ]
+true_car_listings <- read_csv("/home/lucas/Documents/true_car_listings.csv")
+newSet <- true_car_listings[sample(nrow(true_car_listings), 10000), ]
 newSet$City <- NULL
 newSet$State <- NULL
 newSet$Vin <- NULL
+newSet$Model <- NULL
+newSet$Make <- NULL
 set.seed(10)
 
 indexTrain <- createDataPartition(newSet$Price, p = 0.8, list = FALSE)
 
-carTrain <- newSet[indexTrain,]
-carTest <- newSet[-indexTrain,]
+car.train <- newSet[indexTrain,]
+car.test <- newSet[-indexTrain,]
 
 
 set.seed(20)
-fitControl <- trainControl(method = "repeatedcv", number = 10, repeats = 4)
+ctrl <- trainControl(method = "cv", number = 10)
 
 set.seed(30)
-fit <- train(Price ~., data = carTrain, method = "knn", trControl = fitControl, na.action = na.omit)
-fit
-plot(fit)
+model.knn <- train(Price ~., data = car.train, method = "knn", trControl = ctrl, na.action = na.omit)
+model.knn$results
+plot(model.knn)
 
-predict(fit, carTest)
+model.lm <- train(Price ~., data = car.train, method = "lm", trControl = ctrl, na.action = na.omit)
+model.lm$results
 
+predict(model.knn, car.test)
+predict(model.lm, car.test)
+
+mods <- resamples(list(knn = model.knn, lm = model.lm))
+summary(mods)
 
