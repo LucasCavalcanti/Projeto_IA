@@ -2,7 +2,7 @@ library(readr)
 library(caret)
 
 true_car_listings <- read_csv("/home/lucas/Documents/true_car_listings.csv")
-newSet <- true_car_listings[sample(nrow(true_car_listings), 10000), ]
+newSet <- true_car_listings[sample(nrow(true_car_listings), 30000), ]
 newSet$City <- NULL
 newSet$State <- NULL
 newSet$Vin <- NULL
