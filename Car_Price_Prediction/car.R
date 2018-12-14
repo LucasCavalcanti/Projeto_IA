@@ -2,7 +2,7 @@ library(readr)
 library(caret)
 
 true_car_listings <- read_csv("/home/lucas/Documents/true_car_listings.csv")
-newSet <- true_car_listings[sample(nrow(true_car_listings), 100000), ]
+newSet <- true_car_listings[sample(nrow(true_car_listings), 20000), ]
 newSet$City <- NULL
 newSet$State <- NULL
 newSet$Vin <- NULL
@@ -17,20 +17,28 @@ car.test <- newSet[-indexTrain,]
 
 
 set.seed(20)
-ctrl <- trainControl(method = "cv", number = 10)
+ctrl <- trainControl(method = "repeatedcv", number = 10, repeats = 10)
 
 set.seed(30)
 model.knn <- train(Price ~., data = car.train, method = "knn", trControl = ctrl, na.action = na.omit)
 model.knn
 ggplot(model.knn)
 
+knn.predict <- predict(model.knn, car.test)
+
 model.lm <- train(Price ~., data = car.train, method = "lm", trControl = ctrl, na.action = na.omit)
 model.lm
 
-knn.predict <- predict(model.knn, car.test)
 lm.predict <- predict(model.lm, car.test)
 
 knn.results <- data.frame(car.test$Price, knn.predict)
+knn.results
+
+lm.results <- data.frame(car.test$Price, lm.predict)
+lm.results
+
+model.knn$finalModel
 
 mods <- resamples(list(knn = model.knn, lm = model.lm))
 summary(mods)
+
